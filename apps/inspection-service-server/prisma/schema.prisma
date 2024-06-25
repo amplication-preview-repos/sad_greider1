@@ -1,0 +1,71 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Photo {
+  caption         String?
+  cause           String?
+  createdAt       DateTime    @default(now())
+  dimensions      String?
+  id              String      @id @default(cuid())
+  inspection      Inspection? @relation(fields: [inspectionId], references: [id])
+  inspectionId    String?
+  location        String?
+  observation     String?
+  otherRemarks    String?
+  remedialMeasure String?
+  serialNumber    Int?
+  severity        String?
+  updatedAt       DateTime    @updatedAt
+}
+
+model Inspection {
+  comments    String?
+  createdAt   DateTime   @default(now())
+  date        DateTime?
+  engineer    Engineer?  @relation(fields: [engineerId], references: [id])
+  engineerId  String?
+  id          String     @id @default(cuid())
+  photos      Photo[]
+  structure   Structure? @relation(fields: [structureId], references: [id])
+  structureId String?
+  updatedAt   DateTime   @updatedAt
+}
+
+model Engineer {
+  contactInformation String?
+  createdAt          DateTime     @default(now())
+  id                 String       @id @default(cuid())
+  inspections        Inspection[]
+  licenseNumber      String?
+  name               String?
+  projects           Project[]
+  updatedAt          DateTime     @updatedAt
+}
+
+model Structure {
+  address     String?
+  createdAt   DateTime     @default(now())
+  description String?
+  id          String       @id @default(cuid())
+  inspections Inspection[]
+  typeField   String?
+  updatedAt   DateTime     @updatedAt
+}
+
+model Project {
+  createdAt   DateTime  @default(now())
+  description String?
+  endDate     DateTime?
+  engineer    Engineer? @relation(fields: [engineerId], references: [id])
+  engineerId  String?
+  id          String    @id @default(cuid())
+  name        String?
+  startDate   DateTime?
+  updatedAt   DateTime  @updatedAt
+}
